@@ -13,7 +13,9 @@ __NC	:=	\033[0m
 __NAME	:= sandpile
 
 __SRC	:=	src/main.cpp \
-	src/Setup.cpp
+	src/SandPileException.cpp \
+	src/Setup.cpp \
+	src/Map.cpp \
 
 %.o: %.cpp
 	@$(__CXX) -c -o $@ $< $(__CXXFLAGS)
