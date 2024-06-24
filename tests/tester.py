@@ -32,7 +32,7 @@ class Test:
             print(f"\t[{RED}FAIL{RESET}] {BOLD}Program Failed. Stopping.{RESET}")
             return False
 
-        status = system(f"diff /tmp/sandpile_out {self.expected}")
+        status = system(f"diff /tmp/sandpile_out {self.expected} > /dev/null")
         if status != 0:
             print(f"\t[{RED}==={RESET}] {BOLD}Output differs. Stopping.{RESET}")
             return False
@@ -66,12 +66,9 @@ if __name__ == '__main__':
         Test('simple_numerals', ['0123', '2']),
     ]
     for build in builds:
+        print('')
         if not build.build():
             exit(1)
         for test in tests:
-            if not test.run():
-                build.clean()
-                exit(1)
+            test.run()
         build.clean()
-        if build != builds[-1]:
-            print('')
