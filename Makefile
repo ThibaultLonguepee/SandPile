@@ -29,8 +29,13 @@ __CXXFLAGS += -I./include
 
 all: $(__NAME)
 
+DEFAULT: all
+
 COPY_COLLAPSE: __CXXFLAGS += -DCOPY_COLLAPSE
-COPY_COLLAPSE: re
+COPY_COLLAPSE: all
+
+SELF_COLLAPSE: __CXXFLAGS += -DSELF_COLLAPSE
+SELF_COLLAPSE: all
 
 $(__NAME):	$(__OBJ)
 	@printf "$(__GREEN)$(__BOLD)Compilation\n$(__NC)"
@@ -49,7 +54,7 @@ fclean: clean
 
 re: fclean all
 
-test:	all
+test:
 	@python3 tests/tester.py
 
 .PHONY: all clean fclean re

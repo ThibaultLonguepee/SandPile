@@ -75,19 +75,33 @@ uint32_t Map::at(uint32_t x, uint32_t y) const
     return this->_map[y][x];
 }
 
+
+void Map::draw(const std::string& display) const noexcept
+{
+    for (uint32_t y = 0; y < this->_height; y++) {
+        std::string line = "";
+        for (uint32_t x = 0; x < this->_width; x++)
+            line += display[this->_map[y][x]];
+        std::cout << line << std::endl;
+    }
+}
+
 void Map::update() noexcept
 {
     uint32_t x = this->_width / 2;
     uint32_t y = this->_height / 2;
-    #ifdef COPY_COLLAPSE
+    #if defined(COPY_COLLAPSE)
     this->_map[y][x]++;
     this->_copyCollapse();
+    #elif defined(SELF_COLLAPSE)
+    this->_map[y][x]++;
+    this->_selfCollapse();
     #else
     this->_recCollapse(x, y);
     #endif
 }
 
-#ifdef COPY_COLLAPSE
+#if defined(COPY_COLLAPSE)
 
 void Map::_copyCollapse() noexcept
 {
@@ -112,11 +126,27 @@ void Map::_copyCollapse() noexcept
     } while (modified);
 }
 
-void Map::_safeChange(uint32_t x, uint32_t y, int8_t delta) noexcept
+#elif defined(SELF_COLLAPSE)
+
+void Map::_selfCollapse() noexcept
 {
-    if (x >= this->_width || y >= this->_height)
-        return;
-    this->_map[y][x] += delta;
+    bool modified;
+
+    do {
+        modified = false;
+        for (uint32_t y = 0; y < this->_height; y++) {
+            for (uint32_t x = 0; x < this->_width; x++) {
+                if (this->_map[y][x] < 4)
+                    continue;
+                modified = true;
+                this->_safeChange(x, y, -4);
+                this->_safeChange(x, y - 1, 1);
+                this->_safeChange(x, y + 1, 1);
+                this->_safeChange(x - 1, y, 1);
+                this->_safeChange(x + 1, y, 1);
+            }
+        }
+    } while (modified);
 }
 
 #else
@@ -137,12 +167,13 @@ void Map::_recCollapse(uint32_t x, uint32_t y) noexcept
 
 #endif
 
-void Map::draw(const std::string& display) const noexcept
+#if defined(SELF_COLLAPSE) || defined(COPY_COLLAPSE)
+
+void Map::_safeChange(uint32_t x, uint32_t y, int8_t delta) noexcept
 {
-    for (uint32_t y = 0; y < this->_height; y++) {
-        std::string line = "";
-        for (uint32_t x = 0; x < this->_width; x++)
-            line += display[this->_map[y][x]];
-        std::cout << line << std::endl;
-    }
+    if (x >= this->_width || y >= this->_height)
+        return;
+    this->_map[y][x] += delta;
 }
+
+#endif

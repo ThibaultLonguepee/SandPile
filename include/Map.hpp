@@ -21,17 +21,22 @@ class Map {
         uint32_t height() const noexcept { return this->_height; }
 
         uint32_t at(uint32_t x, uint32_t y) const;
-        void update() noexcept;
         void draw(const std::string& display) const noexcept;
+        void update() noexcept;
 
         const Map& operator=(const Map& source);
 
     private:
-        #ifdef COPY_COLLAPSE
+        #if defined(COPY_COLLAPSE)
         void _copyCollapse() noexcept;
-        void _safeChange(uint32_t x, uint32_t y, int8_t delta) noexcept;
+        #elif defined(SELF_COLLAPSE)
+        void _selfCollapse() noexcept;
         #else
         void _recCollapse(uint32_t x, uint32_t y) noexcept;
+        #endif
+
+        #if defined(SELF_COLLAPSE) || defined(COPY_COLLAPSE)
+        void _safeChange(uint32_t x, uint32_t y, int8_t delta) noexcept;
         #endif
 
     private:
