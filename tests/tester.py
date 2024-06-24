@@ -41,7 +41,7 @@ class Test:
 
 if __name__ == '__main__':
     tests = [
-        Test('simple_numerals', ['"0123"', '2'])
+        Test('simple_numerals', ['0123', '2'])
     ]
     for test in tests:
         if not test.run():
