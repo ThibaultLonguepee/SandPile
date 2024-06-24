@@ -26,6 +26,6 @@ Setup::Setup(int ac, char **av)
             if (this->_display[i] == this->_display[j])
                 throw SandPileException("Display", "should not contain repeated characters.");
 
-    if (this->_iterations == 0)
+    if (this->_iterations < 0)
         throw SandPileException("Iterations", "must be a number strictly superior than 0.");
 }
