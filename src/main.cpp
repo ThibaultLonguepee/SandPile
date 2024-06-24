@@ -15,6 +15,9 @@ int main(int ac, char **av)
 
         Setup setup(ac, av);
         Map map(setup.map(), setup.display());
+
+        for (uint32_t i = 0; i < setup.iterations(); i++)
+            map.update();
         map.draw(setup.display());
 
     } catch(const std::exception& e) {
