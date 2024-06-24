@@ -23,5 +23,5 @@ class Setup
     private:
         std::string _mapFile = "";
         std::string _display = "";
-        uint32_t _iterations = 0;
+        int32_t _iterations = 0;
 };

@@ -79,28 +79,63 @@ void Map::update() noexcept
 {
     uint32_t x = this->_width / 2;
     uint32_t y = this->_height / 2;
-    this->_map[y][x] += 1;
+    #ifdef COPY_COLLAPSE
+    this->_map[y][x]++;
+    this->_copyCollapse();
+    #else
+    this->_recCollapse(x, y);
+    #endif
 }
 
-void Map::collapse(uint32_t x, uint32_t y)
-{
-    if (x >= this->_width || y >= this->_height)
-        throw std::out_of_range(
-            "Map (" + std::to_string(x) + ", " + std::to_string(y) + ")");
+#ifdef COPY_COLLAPSE
 
-    safeChange(x, y, -4);
-    safeChange(x, y - 1, 1);
-    safeChange(x, y + 1, 1);
-    safeChange(x - 1, y, 1);
-    safeChange(x + 1, y, 1);
+void Map::_copyCollapse() noexcept
+{
+    bool modified;
+
+    do {
+        Map copy(*this);
+        modified = false;
+        for (uint32_t y = 0; y < this->_height; y++) {
+            for (uint32_t x = 0; x < this->_height; x++) {
+                if (this->_map[y][x] < 4)
+                    continue;
+                modified = true;
+                safeChange(x, y, -4);
+                safeChange(x, y - 1, 1);
+                safeChange(x, y + 1, 1);
+                safeChange(x - 1, y, 1);
+                safeChange(x + 1, y, 1);
+            }
+        }
+        this->_map = copy._map;
+    } while (modified)
 }
 
-void Map::safeChange(uint32_t x, uint32_t y, int8_t delta) noexcept
+void Map::_safeChange(uint32_t x, uint32_t y, int8_t delta) noexcept
 {
-    if (x >= this->_width || y >= this->_height)
+    if (x > this->_width || y > this->_height)
         return;
     this->_map[y][x] += delta;
 }
+
+#else
+
+void Map::_recCollapse(uint32_t x, uint32_t y) noexcept
+{
+    if (x >= this->_width || y >= this->_height)
+        return;
+    this->_map[y][x]++;
+    if (this->_map[y][x] < 4)
+        return;
+    this->_map[y][x] -= 4;
+    this->_recCollapse(x - 1, y);
+    this->_recCollapse(x + 1, y);
+    this->_recCollapse(x, y - 1);
+    this->_recCollapse(x, y + 1);
+}
+
+#endif
 
 void Map::draw(const std::string& display) const noexcept
 {

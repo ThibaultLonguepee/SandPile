@@ -22,14 +22,19 @@ class Map {
 
         uint32_t at(uint32_t x, uint32_t y) const;
         void update() noexcept;
-        void collapse(uint32_t x, uint32_t y);
         void draw(const std::string& display) const noexcept;
 
         const Map& operator=(const Map& source);
 
-    protected:
     private:
-        void safeChange(uint32_t x, uint32_t y, int8_t delta) noexcept;
+        #ifdef COPY_COLLAPSE
+        void _copyCollapse() noexcept;
+        void _safeChange(uint32_t x, uint32_t y, int8_t delta) noexcept;
+        #else
+        void _recCollapse(uint32_t x, uint32_t y) noexcept;
+        #endif
+
+    private:
         uint32_t _width = 0;
         uint32_t _height = 0;
         std::string _source = "";
