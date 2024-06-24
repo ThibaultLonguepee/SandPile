@@ -91,10 +91,10 @@ void Map::update() noexcept
     uint32_t x = this->_width / 2;
     uint32_t y = this->_height / 2;
     #if defined(COPY_COLLAPSE)
-    this->_map[y][x]++;
+    this->_safeChange(x, y, 1);
     this->_copyCollapse();
     #elif defined(SELF_COLLAPSE)
-    this->_map[y][x]++;
+    this->_safeChange(x, y, 1);
     this->_selfCollapse();
     #else
     this->_recCollapse(x, y);
