@@ -29,6 +29,9 @@ __CXXFLAGS += -I./include
 
 all: $(__NAME)
 
+COPY_COLLAPSE: __CXXFLAGS += -DCOPY_COLLAPSE
+COPY_COLLAPSE: re
+
 $(__NAME):	$(__OBJ)
 	@printf "$(__GREEN)$(__BOLD)Compilation\n$(__NC)"
 	@$(__CXX) -o $(__NAME) $(__OBJ) $(__CXXFLAGS)

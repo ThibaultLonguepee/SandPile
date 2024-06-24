@@ -97,24 +97,24 @@ void Map::_copyCollapse() noexcept
         Map copy(*this);
         modified = false;
         for (uint32_t y = 0; y < this->_height; y++) {
-            for (uint32_t x = 0; x < this->_height; x++) {
+            for (uint32_t x = 0; x < this->_width; x++) {
                 if (this->_map[y][x] < 4)
                     continue;
                 modified = true;
-                safeChange(x, y, -4);
-                safeChange(x, y - 1, 1);
-                safeChange(x, y + 1, 1);
-                safeChange(x - 1, y, 1);
-                safeChange(x + 1, y, 1);
+                copy._safeChange(x, y, -4);
+                copy._safeChange(x, y - 1, 1);
+                copy._safeChange(x, y + 1, 1);
+                copy._safeChange(x - 1, y, 1);
+                copy._safeChange(x + 1, y, 1);
             }
         }
         this->_map = copy._map;
-    } while (modified)
+    } while (modified);
 }
 
 void Map::_safeChange(uint32_t x, uint32_t y, int8_t delta) noexcept
 {
-    if (x > this->_width || y > this->_height)
+    if (x >= this->_width || y >= this->_height)
         return;
     this->_map[y][x] += delta;
 }
